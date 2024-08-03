@@ -41,7 +41,6 @@ const LoginPage: React.FC = () => {
           event.preventDefault()
         }}>New User? Signup </Button>
         </div>
-        {/* <a href="/signup">New User? Signup</a> */}
       </form>
     </div>
   );

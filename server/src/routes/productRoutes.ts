@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as expressValidator from "express-validator";
-import { addProduct, getProducts } from "../controllers/productController";
+import { addProduct, deleteProduct, getProducts } from "../controllers/productController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import multer from "multer";
 
@@ -19,5 +19,5 @@ router.post(
   );
 
 router.get("/all", getProducts);
-
+router.delete("/delete/:productId", authMiddleware, deleteProduct);
 export default router;

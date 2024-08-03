@@ -46,3 +46,17 @@ export const addProduct = async (req: Request, res: Response) => {
     res.status(500).json({ error });
   }
 };
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+
+  try {
+    const product = await Product.findByIdAndDelete(productId);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};

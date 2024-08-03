@@ -6,8 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { CiShoppingCart } from "react-icons/ci";
-import { FaTrash } from "react-icons/fa";
 import { RiLogoutBoxRLine } from "react-icons/ri";
+import { FaTrash } from "react-icons/fa";
 
 interface Product {
   _id: string;
@@ -80,7 +80,16 @@ const AdminPage: React.FC = () => {
     }
   };
 
-
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await API.delete(`/products/delete/${productId}`);
+      toast.success("Product deleted successfully.");
+      const { data } = await API.get("/products/all");
+      setProducts(data);
+    } catch (error) {
+      toast.error("Failed to delete product.");
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 flex">
@@ -96,6 +105,7 @@ const AdminPage: React.FC = () => {
               <li key={product._id} className="flex items-center justify-between mb-4">
                 <span>{product.title}</span>
                 <button
+                  onClick={() => handleDeleteProduct(product._id)}
                   className="text-red-500 hover:text-red-700 transition duration-200"
                 >
                   <FaTrash size={20} />
