@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import API from '../services/api';
+import {API} from '../services/api';
+import { Button } from '@/components/ui/button';
 
 interface Product {
   _id: string;
@@ -10,7 +11,7 @@ interface Product {
 }
 
 interface Cart {
-  products: { product: Product, quantity: number }[];
+  products: { product: Product; quantity: number }[];
 }
 
 const CartPage: React.FC = () => {
@@ -40,16 +41,20 @@ const CartPage: React.FC = () => {
   if (!cart) return <div>Loading...</div>;
 
   return (
-    <div>
-      <h2>Cart</h2>
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">Cart</h2>
       {cart.products.map(({ product, quantity }) => (
-        <div key={product._id}>
-          <h3>{product.title}</h3>
-          <p>${product.price}</p>
+        <div key={product._id} className="border p-2 mb-2">
+          <h3 className="text-lg font-semibold">{product.title}</h3>
+          <p>Price: ${product.price}</p>
           <p>Quantity: {quantity}</p>
         </div>
       ))}
-      {cart.products.length > 0 && <button onClick={handleCheckout}>Checkout</button>}
+      {cart.products.length > 0 && (
+        <Button className="mt-4" onClick={handleCheckout}>
+          Checkout
+        </Button>
+      )}
     </div>
   );
 };
