@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import {connectDB} from "./DB/dbConn";
 import authRoutes from "./routes/authRoutes";
 import cartRoutes from './routes/cartRoutes';
+import productRoutes from './routes/productRoutes';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use("/api/auth", authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/products', productRoutes);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
