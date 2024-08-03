@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API} from "../services/api";
+import { API, Logout} from "../services/api";
 import { FaTrash } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -111,6 +111,9 @@ const CartPage: React.FC = () => {
               View All Products <CiShoppingCart size={20} className="ml-2" />
             </Button>
           </Link>
+          <Button variant="outline" onClick={Logout}>
+            <RiLogoutBoxRLine size={20} />
+          </Button>
         </div>
       </div>
       {cart?.products.length === 0 ? (

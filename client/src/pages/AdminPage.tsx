@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { API } from "../services/api";
+import { API, Logout } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { CiShoppingCart } from "react-icons/ci";
 import { FaTrash } from "react-icons/fa";
+import { RiLogoutBoxRLine } from "react-icons/ri";
 
 interface Product {
   _id: string;
@@ -113,6 +114,9 @@ const AdminPage: React.FC = () => {
                 View All Products <CiShoppingCart size={20} className="ml-2" />
               </Button>
             </Link>
+            <Button variant="outline" onClick={Logout}>
+              <RiLogoutBoxRLine />
+            </Button>
           </div>
         </div>
         <form onSubmit={handleAddProduct} className="w-full md:w-1/2 p-4 border border-gray-300 rounded-lg shadow-lg">

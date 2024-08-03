@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API} from "../services/api";
+import { API, Logout} from "../services/api";
 import {
   Card,
   CardContent,
@@ -74,6 +74,9 @@ const ProductListPage: React.FC = () => {
               Got to Cart <CiShoppingCart size={20} className="ml-2" />
             </Button>
           </Link>
+          <Button variant="outline" onClick={Logout}>
+            <RiLogoutBoxRLine />
+          </Button>
         </div>
       </div>
       <div className="flex flex-wrap -mx-4">
