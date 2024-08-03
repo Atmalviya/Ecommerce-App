@@ -89,8 +89,10 @@ export const updateProductQuantity = async (req: Request, res: Response) => {
   const { productId, quantity } = req.body;
 
   try {
+    console.log(req.user)
     const cart = await Cart.findOne({ user: req.user.userId });
-    if (!cart) return res.status(404).json({ error: "Cart not found" });
+    console.log(cart)
+    if (!cart) return res.status(404).json({ error: 'Cart not found' });
 
     const product = cart.products.find((p) => p.product.equals(productId));
     if (!product)
