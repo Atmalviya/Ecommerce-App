@@ -1,7 +1,7 @@
 import axios from 'axios';
-
+export const HOST = 'http://localhost:5000';
 export const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: `${HOST}/api`,
 });
 
 API.interceptors.request.use((req) => {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {API} from "../services/api";
+import { API } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -20,64 +20,70 @@ const SignupPage: React.FC = () => {
       }
       const { data, status } = await API.post("/auth/register", { email, password });
       if (status === 201) {
-          localStorage.setItem("token", data.token);
-          toast.success(data.message);
-          navigate("/products");
+        localStorage.setItem("token", data.token);
+        toast.success(data.message);
+        navigate("/products");
       }
     } catch (error) {
-        if (error instanceof AxiosError) {
-            console.log(error.response?.data);
-            toast.error(error.response?.data.error);
-          } else {
-            toast.error("An unexpected error occurred");
-          }
+      if (error instanceof AxiosError) {
+        console.log(error.response?.data);
+        toast.error(error.response?.data.error);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 
   return (
-    <div className=" m-5 flex items-center justify-center">
-      <div className="mb-4 w-1/4 flex flex-col">
-        <h1>Login</h1>
-        <label>Email:</label>
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          className=""
-        />
-        {/* </div>
-      <div className="mb-4 w-1/4"> */}
-        <label>Password:</label>
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
-          className=""
-        />
-        {/* </div>
-      <div className="mb-4 w-1/4"> */}
-        <label>Confirm Password:</label>
-        <Input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Enter confirm password"
-          className=""
-        />
-        {/* </div> */}
-        <div className="flex items-center justify-between max-w-[500px]">
-          <Button onClick={handleSignUp}>Register </Button>
-          <Button
-            onClick={(event) => {
-              navigate("/login");
-              event.preventDefault();
-            }}
-          >
-            Alredy User? Login{" "}
-          </Button>
-        </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-md rounded-lg p-8 max-w-sm w-full">
+        <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
+        <form onSubmit={handleSignUp}>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Email:</label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Password:</label>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Confirm Password:</label>
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm your password"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div className="flex flex-col items-center">
+            <Button type="submit" className="w-full text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-200">
+              Register
+            </Button>
+            <Button variant={"link"}
+              className="mt-4"
+              onClick={(event) => {
+                navigate("/login");
+                event.preventDefault();
+              }}
+            >
+              Already a user? Login
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
