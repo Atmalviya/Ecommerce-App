@@ -6,6 +6,7 @@ import CartPage from './pages/CartPage';
 import AdminPage from './pages/AdminPage';
 import SignupPage from './pages/SignupPage';
 import { toast } from 'sonner';
+import AdminRoute from "./components/AdminRoutes";
 
 const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem("token");
@@ -42,7 +43,11 @@ const App: React.FC = () => {
         <Route path="/cart" element={<PrivateRoute>
               <CartPage />
             </PrivateRoute>} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin" element={<PrivateRoute>
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
+            </PrivateRoute>} />
         <Route path="/" element={<LoginPage />} />
         <Route path="*" element={<LoginPage />} />
       </Routes>
