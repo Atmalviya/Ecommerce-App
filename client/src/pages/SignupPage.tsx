@@ -4,7 +4,7 @@ import { API } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
+import {AxiosError } from "axios";
 
 interface RegisterResponse {
   token: string;
