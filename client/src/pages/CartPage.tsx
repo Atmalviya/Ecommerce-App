@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API } from "../services/api";
+import { API} from "../services/api";
 import { FaTrash } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -7,14 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Product {
   _id: string;
@@ -50,6 +43,42 @@ const CartPage: React.FC = () => {
     };
     fetchCart();
   }, []);
+
+  const handleQuantityChange = async (productId: string, increment: boolean) => {
+    try {
+      const product = cart?.products.find(p => p.product._id === productId);
+      if (!product) return;
+
+      const newQuantity = increment ? product.quantity + 1 : Math.max(1, product.quantity - 1);
+      await API.post("/cart/update-quantity", { productId, quantity: newQuantity });
+      
+      // Update the cart state
+      setCart(prevCart => ({
+        ...prevCart!,
+        products: prevCart!.products.map(p =>
+          p.product._id === productId ? { ...p, quantity: newQuantity } : p
+        )
+      }));
+    } catch (error) {
+      toast.error("Failed to update quantity.");
+    }
+  };
+
+  const handleRemoveProduct = async (productId: string) => {
+    try {
+      await API.post("/cart/remove", { productId });
+
+      // Update the cart state
+      setCart(prevCart => ({
+        ...prevCart!,
+        products: prevCart!.products.filter(p => p.product._id !== productId)
+      }));
+      
+      toast.success("Product removed from cart.");
+    } catch (error) {
+      toast.error("Failed to remove product.");
+    }
+  };
 
   const handleCheckout = async () => {
     if (!shippingAddress) {
@@ -90,10 +119,7 @@ const CartPage: React.FC = () => {
         <div className="flex flex-wrap md:flex-nowrap justify-between">
           <div className="w-full md:w-2/3">
             {cart?.products.map(({ product, quantity }) => (
-              <Card
-                key={product._id}
-                className="border border-gray-300 rounded-lg shadow-lg mb-4 p-4"
-              >
+              <Card key={product._id} className="border border-gray-300 rounded-lg shadow-lg mb-4 p-4">
                 <div className="flex justify-between">
                   <div className="flex">
                     <img
@@ -103,36 +129,37 @@ const CartPage: React.FC = () => {
                     />
                     <div className="flex-1">
                       <CardHeader>
-                        <CardTitle className="text-lg font-semibold">
-                          {product.title}
-                        </CardTitle>
-                        <CardDescription className="text-sm text-gray-500">
-                          {product.description}
-                        </CardDescription>
+                        <CardTitle className="text-lg font-semibold">{product.title}</CardTitle>
+                        <CardDescription className="text-sm text-gray-500">{product.description}</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="flex items-center mt-2">
                           <span>Quantity: </span>
-                          <Button className="mr-2 bg-[#00071387] h-7 w-7">
+                          <Button
+                            className="mr-2 bg-[#00071387] h-7 w-7"
+                            onClick={() => handleQuantityChange(product._id, false)}
+                          >
                             -
                           </Button>
                           {quantity}
-                          <Button className="ml-2 bg-[#00071387] h-7 w-7">
+                          <Button
+                            className="ml-2 bg-[#00071387] h-7 w-7"
+                            onClick={() => handleQuantityChange(product._id, true)}
+                          >
                             +
                           </Button>
                         </div>
                       </CardContent>
                       <CardFooter className="mt-4 flex gap-5">
-                        <p className="text-lg font-bold">
-                          Per item: ${product.price}
-                        </p>
-                        <p className="text-lg font-bold">
-                          Total: ${product.price * quantity}
-                        </p>
+                        <p className="text-lg font-bold">Per item: ${product.price}</p>
+                        <p className="text-lg font-bold">Total: ${product.price * quantity}</p>
                       </CardFooter>
                     </div>
                   </div>
-                  <button className="text-red-500 hover:text-red-700 transition duration-200">
+                  <button
+                    className="text-red-500 hover:text-red-700 transition duration-200"
+                    onClick={() => handleRemoveProduct(product._id)}
+                  >
                     <FaTrash size={20} />
                   </button>
                 </div>
@@ -145,22 +172,13 @@ const CartPage: React.FC = () => {
               <ul className="mb-4">
                 {cart?.products.map(({ product, quantity }) => (
                   <li key={product._id} className="flex justify-between mb-2">
-                    <span>
-                      {product.title} x {quantity}
-                    </span>
+                    <span>{product.title} x {quantity}</span>
                     <span>${(product.price * quantity).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
               <p className="text-lg font-bold border-t py-2">
-                Total: $
-                {cart?.products
-                  .reduce(
-                    (total, { product, quantity }) =>
-                      total + product.price * quantity,
-                    0
-                  )
-                  .toFixed(2)}
+                Total: ${cart?.products.reduce((total, { product, quantity }) => total + product.price * quantity, 0).toFixed(2)}
               </p>
               <Input
                 placeholder="Enter your shipping address"
