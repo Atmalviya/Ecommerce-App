@@ -5,6 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 
+// Define the expected response data type
+interface LoginResponse {
+  token: string;
+  message: string;
+}
+
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +19,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { data } = await API.post('/auth/login', { email, password });
+      const { data } = await API.post<LoginResponse>('/auth/login', { email, password });
       localStorage.setItem('token', data.token);
       toast.success(data.message);
       navigate('/products');

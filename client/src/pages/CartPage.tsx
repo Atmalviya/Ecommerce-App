@@ -33,6 +33,13 @@ interface CartProduct {
 interface Cart {
   products: CartProduct[];
 }
+interface CartResponse {
+  products: CartProduct[];
+}
+interface CheckoutResponse {
+  message: string;
+  // Add other properties as needed based on the API response
+}
 
 const CartPage: React.FC = () => {
   const [shippingAddress, setShippingAddress] = useState<string>("");
@@ -42,7 +49,7 @@ const CartPage: React.FC = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const { data } = await API.get("/cart/view");
+        const { data } = await API.get<CartResponse>("/cart/view");
         setCart(data);
       } catch (error) {
         toast.error("Failed to fetch cart items.");
@@ -98,7 +105,7 @@ const CartPage: React.FC = () => {
 
     try {
       setIsLoading(true);
-      const { data } = await API.post("/cart/checkout", { shippingAddress });
+      const { data } = await API.post<CheckoutResponse>("/cart/checkout", { shippingAddress });
       toast.success(data.message);
       setCart(null);
       setShippingAddress("");

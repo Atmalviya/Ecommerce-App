@@ -17,6 +17,11 @@ interface Product {
   image: string;
 }
 
+interface ProductResponse {
+  message: string;
+  products: Product[];
+}
+
 const AdminPage: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -29,7 +34,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await API.get("/products/all");
+        const { data } = await API.get<Product[]>("/products/all");
         setProducts(data);
       } catch (error) {
         toast.error("Failed to fetch products.");
@@ -49,18 +54,18 @@ const AdminPage: React.FC = () => {
     if (image) formData.append("image", image);
 
     try {
-      const res = await API.post("/products/add", formData, {
+      const { data } = await API.post<ProductResponse>("/products/add", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success(res.data.message);
+      toast.success(data.message);
       setTitle("");
       setDescription("");
       setPrice(0);
       setImage(null);
       setImagePreview(null);
       // Refresh the product list after adding a new product
-      const { data } = await API.get("/products/all");
-      setProducts(data);
+      const { data: newProducts } = await API.get<Product[]>("/products/all");
+      setProducts(newProducts);
     } catch (error) {
       toast.error("Failed to add product.");
     }
@@ -84,13 +89,12 @@ const AdminPage: React.FC = () => {
     try {
       await API.delete(`/products/delete/${productId}`);
       toast.success("Product deleted successfully.");
-      const { data } = await API.get("/products/all");
+      const { data } = await API.get<Product[]>("/products/all");
       setProducts(data);
     } catch (error) {
       toast.error("Failed to delete product.");
     }
   };
-
   return (
     <div className="container mx-auto p-4 flex">
       <div className="w-full md:w-1/4 p-4 border border-gray-300 rounded-lg shadow-lg">

@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import {API} from "../services/api";
+import { API } from "../services/api";
 
 interface AdminRouteProps {
   children: React.ReactNode;
+}
+
+interface AdminResponse {
+  admin: boolean;
 }
 
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
@@ -12,7 +16,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
   useEffect(() => {
     const checkAdmin = async () => {
       try {
-        const { data } = await API.get("/products/admin");
+        const { data } = await API.get<AdminResponse>("/products/admin");
         setIsAdmin(data.admin);
       } catch (error) {
         setIsAdmin(false);
@@ -23,13 +27,13 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
   }, []);
 
   if (isAdmin === null) {
-    // toast.error("Loadin admin status... Please wait! :)");
     return <div>Loading...</div>; // or some loading indicator
   }
 
   if (!isAdmin) {
     return <Navigate to="/products" />;
   }
+
   return <>{children}</>;
 };
 

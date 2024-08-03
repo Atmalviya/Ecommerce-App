@@ -22,6 +22,10 @@ interface Product {
   price: number;
   image: string;
 }
+interface AddToCartResponse {
+  message: string;
+  // Include other fields if the response has more properties
+}
 
 const ProductListPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,13 +33,17 @@ const ProductListPage: React.FC = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await API.get("/products/all");
-      setProducts(data);
-      const initialQuantities: { [key: string]: number } = {};
-      data.forEach((product: Product) => {
-        initialQuantities[product._id] = 1;
-      });
-      setQuantities(initialQuantities);
+      try {
+        const { data } = await API.get<Product[]>("/products/all");
+        setProducts(data);
+        const initialQuantities: { [key: string]: number } = {};
+        data.forEach((product) => {
+          initialQuantities[product._id] = 1;
+        });
+        setQuantities(initialQuantities);
+      } catch (error) {
+        toast.error("Failed to fetch products.");
+      }
     };
 
     fetchProducts();
@@ -54,14 +62,13 @@ const ProductListPage: React.FC = () => {
   const addToCart = async (product: Product) => {
     const quantity = quantities[product._id] || 1;
     try {
-      const res = await API.post("/cart/add", {
+      const res = await API.post<AddToCartResponse>("/cart/add", {
         productId: product._id,
         quantity,
       });
-      //   setCart([...cart, { product, quantity }]);
       toast.success(res.data.message);
     } catch (error) {
-      alert("Failed to add item to cart");
+      toast.error("Failed to add item to cart.");
     }
   };
 

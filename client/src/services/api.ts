@@ -7,14 +7,13 @@ export const API = axios.create({
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
   if (token) {
+    req.headers = req.headers || {}; // Ensure req.headers is defined
     req.headers['Authorization'] = `Bearer ${token}`;
   }
   return req;
 });
 
-
 export const Logout = () => {
   localStorage.removeItem('token');
   window.location.reload();
 };
-

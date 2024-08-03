@@ -4,7 +4,16 @@ import { API } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
+
+interface RegisterResponse {
+  token: string;
+  message: string;
+}
+interface APIError {
+  error: string;
+}
+
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -12,22 +21,24 @@ const SignupPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (password !== confirmPassword) {
         return toast.error("Passwords do not match");
       }
-      const { data, status } = await API.post("/auth/register", { email, password });
+      const { data, status } = await API.post<RegisterResponse>("/auth/register", { email, password });
       if (status === 201) {
         localStorage.setItem("token", data.token);
         toast.success(data.message);
         navigate("/products");
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(error.response?.data);
-        toast.error(error.response?.data.error);
+      if (error as APIError) {
+        const apiError = error as AxiosError<APIError>;
+        console.log(apiError.response?.data);
+        toast.error(apiError.response?.data.error);
       } else {
         toast.error("An unexpected error occurred");
       }
@@ -73,7 +84,8 @@ const SignupPage: React.FC = () => {
             <Button type="submit" className="w-full text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-200">
               Register
             </Button>
-            <Button variant={"link"}
+            <Button
+              variant={"link"}
               className="mt-4"
               onClick={(event) => {
                 navigate("/login");
