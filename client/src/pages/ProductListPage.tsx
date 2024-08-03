@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { CiShoppingCart } from "react-icons/ci";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -40,6 +40,15 @@ const ProductListPage: React.FC = () => {
     fetchProducts();
   }, []);
 
+  const handleQuantityChange = (productId: string, increment: boolean) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: Math.max(
+        1,
+        (prevQuantities[productId] || 1) + (increment ? 1 : -1)
+      ),
+    }));
+  };
 
   const addToCart = async (product: Product) => {
     const quantity = quantities[product._id] || 1;
@@ -85,6 +94,22 @@ const ProductListPage: React.FC = () => {
                   alt={product.title}
                   className="w-full h-auto"
                 />
+                <div className="flex items-center mt-2">
+                  <span>Quantity: </span>
+                  <Button
+                    className="mr-2 bg-[#00071387] h-7 w-7"
+                    onClick={() => handleQuantityChange(product._id, false)}
+                  >
+                    -
+                  </Button>
+                  {quantities[product._id]}
+                  <Button
+                    className="ml-2 bg-[#00071387] h-7 w-7"
+                    onClick={() => handleQuantityChange(product._id, true)}
+                  >
+                    +
+                  </Button>
+                </div>
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <p className="text-lg font-bold">${product.price}</p>

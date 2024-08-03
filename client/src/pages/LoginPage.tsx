@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {API} from '../services/api';
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { toast } from 'sonner';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +15,8 @@ const LoginPage: React.FC = () => {
     try {
       const { data } = await API.post('/auth/login', { email, password });
       localStorage.setItem('token', data.token);
-      alert(data.message);
+      toast.success(data.message);
+      // alert(data.message);
       navigate('/products');
     } catch (error) {
       alert('Invalid credentials');
@@ -20,18 +24,24 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className=' m-5 '>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <div>
+        <div className='mb-4 w-1/4'>
           <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Input type='email' value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Enter your email' className=''/>
         </div>
-        <div>
+        <div className='mb-4 w-1/4'>
           <label>Password:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <Input type='password' value={password} onChange={(e) => setPassword(e.target.value)}placeholder='Enter your password' className=''/>
         </div>
-        <button type="submit">Login</button>
+        <div className='flex items-center justify-between max-w-[500px]'>
+        <Button type='submit'>Login </Button>
+        <Button onClick={(event) => {navigate('/signup')
+          event.preventDefault()
+        }}>New User? Signup </Button>
+        </div>
+        {/* <a href="/signup">New User? Signup</a> */}
       </form>
     </div>
   );
