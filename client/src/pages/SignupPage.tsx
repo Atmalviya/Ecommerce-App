@@ -4,23 +4,27 @@ import { API } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 
 interface RegisterResponse {
   token: string;
   message: string;
 }
+
 interface APIError {
   error: string;
 }
 
+
+const isAxiosError = (error: any): error is AxiosError => {
+  return error.isAxiosError === true;
+}
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,11 +38,11 @@ const SignupPage: React.FC = () => {
         toast.success(data.message);
         navigate("/products");
       }
-    } catch (error) {
-      if (error as APIError) {
-        const apiError = error as AxiosError<APIError>;
-        console.log(apiError.response?.data);
-        toast.error(apiError.response?.data.error);
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        const apiError = error.response?.data as APIError; // Type assertion
+        console.log(apiError);
+        toast.error(apiError.error || "An error occurred");
       } else {
         toast.error("An unexpected error occurred");
       }
