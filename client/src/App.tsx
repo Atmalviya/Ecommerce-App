@@ -1,17 +1,22 @@
-import { useState } from 'react'
-import './App.css'
-import { Button } from "@/components/ui/button"
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import ProductListPage from './pages/ProductListPage';
+import CartPage from './pages/CartPage';
+import AdminPage from './pages/AdminPage';
 
-
-
-function App() {
-  const [count, setCount] = useState(0)
-
+const App: React.FC = () => {
   return (
-    <>
-    <Button variant="secondary">Click me</Button>
-    </>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/products" element={<ProductListPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/" element={<LoginPage />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;
