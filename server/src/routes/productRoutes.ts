@@ -3,6 +3,7 @@ import * as expressValidator from "express-validator";
 import { addProduct, deleteProduct, getProducts } from "../controllers/productController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import multer from "multer";
+import { adminAuthMiddleware } from "../middlewares/adminAuthMiddleware";
 
 const { body } = expressValidator;
 const router = Router();
@@ -19,5 +20,8 @@ router.post(
   );
 
 router.get("/all", getProducts);
+router.get("/admin", adminAuthMiddleware, (req, res) => {
+  res.status(200).json({ admin: "true" });
+});
 router.delete("/delete/:productId", authMiddleware, deleteProduct);
 export default router;
