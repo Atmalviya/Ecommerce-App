@@ -12,8 +12,10 @@ export const register = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ email, password: hashedPassword, role : role || 'user' });
     await user.save();
-
-    res.status(201).json({ message: 'User registered successfully' });
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET!, {
+      expiresIn: '1d'
+    })
+    res.status(201).json({ token, message: 'User registered successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -34,6 +36,6 @@ export const login = async (req: Request, res: Response) => {
 
     res.json({ token, message: `Hello, ${email}!` });
   } catch (error) {
-    res.status(500).json({ error: 'Server error', error });
+    res.status(500).json({ message: 'Server error', error });
   }
 };
