@@ -25,9 +25,11 @@ const CartPage = () => {
     const fetchCart = async () => {
       try {
         const { data } = await API.get("/cart/view");
+        console.log("Fetched cart data:", data); // Log the data
         setCart(data);
       } catch (error) {
         toast.error("Failed to fetch cart items.");
+        console.error("Fetch cart error:", error); // Log the error
       }
     };
     fetchCart();
@@ -51,6 +53,7 @@ const CartPage = () => {
       }));
     } catch (error) {
       toast.error("Failed to update quantity.");
+      console.error("Update quantity error:", error); // Log the error
     }
   };
 
@@ -66,6 +69,7 @@ const CartPage = () => {
       toast.success("Product removed from cart.");
     } catch (error) {
       toast.error("Failed to remove product.");
+      console.error("Remove product error:", error); // Log the error
     }
   };
 
@@ -83,6 +87,7 @@ const CartPage = () => {
       setShippingAddress("");
     } catch (error) {
       toast.error("Failed to place order.");
+      console.error("Checkout error:", error); // Log the error
     } finally {
       setIsLoading(false);
     }
@@ -112,59 +117,61 @@ const CartPage = () => {
         <div className="flex flex-col md:flex-row justify-between">
           <div className="w-full md:w-2/3">
             {cart?.products.map(({ product, quantity }) => (
-              <Card key={product._id} className="mb-4">
-                <div className="flex justify-between items-center p-4">
-                  <div className="flex items-center">
-                    <img
-                      src={`${HOST}/${product.image}`}
-                      alt={product.title}
-                      className="w-32 h-32 object-cover rounded mr-4"
-                    />
-                    <div className="flex-1">
-                      <CardHeader>
-                        <CardTitle className="text-lg font-semibold">
-                          {product.title}
-                        </CardTitle>
-                        <CardDescription className="text-sm text-gray-500">
-                          {product.description}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="flex items-center mt-2">
-                        <span className="mr-2">Quantity: </span>
-                        <Button
-                          variant="outline"
-                          className="h-7 w-7 flex items-center justify-center"
-                          onClick={() => handleQuantityChange(product._id, false)}
-                        >
-                          -
-                        </Button>
-                        <span className="mx-2">{quantity}</span>
-                        <Button
-                          variant="outline"
-                          className="h-7 w-7 flex items-center justify-center"
-                          onClick={() => handleQuantityChange(product._id, true)}
-                        >
-                          +
-                        </Button>
-                      </CardContent>
-                      <CardFooter className="flex justify-between items-center mt-4">
-                        <p className="text-lg font-bold">
-                          Per item: ${product.price}
-                        </p>
-                        <p className="text-lg font-bold">
-                          Total: ${product.price * quantity}
-                        </p>
-                      </CardFooter>
+              product ? (
+                <Card key={product._id} className="mb-4">
+                  <div className="flex justify-between items-center p-4">
+                    <div className="flex items-center">
+                      <img
+                        src={`${HOST}/${product.image || 'default-image.png'}`} // Default image if product.image is missing
+                        alt={product.title || 'No title'}
+                        className="w-32 h-32 object-cover rounded mr-4"
+                      />
+                      <div className="flex-1">
+                        <CardHeader>
+                          <CardTitle className="text-lg font-semibold">
+                            {product.title || 'No title'}
+                          </CardTitle>
+                          <CardDescription className="text-sm text-gray-500">
+                            {product.description || 'No description'}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex items-center mt-2">
+                          <span className="mr-2">Quantity: </span>
+                          <Button
+                            variant="outline"
+                            className="h-7 w-7 flex items-center justify-center"
+                            onClick={() => handleQuantityChange(product._id, false)}
+                          >
+                            -
+                          </Button>
+                          <span className="mx-2">{quantity}</span>
+                          <Button
+                            variant="outline"
+                            className="h-7 w-7 flex items-center justify-center"
+                            onClick={() => handleQuantityChange(product._id, true)}
+                          >
+                            +
+                          </Button>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center mt-4">
+                          <p className="text-lg font-bold">
+                            Per item: ${product.price || 0}
+                          </p>
+                          <p className="text-lg font-bold">
+                            Total: ${((product.price || 0) * quantity).toFixed(2)}
+                          </p>
+                        </CardFooter>
+                      </div>
                     </div>
+                    <button
+                      className="text-red-500 hover:text-red-700 transition duration-200"
+                      onClick={() => handleRemoveProduct(product._id)}
+                    >
+                      <FaTrash size={20} />
+                    </button>
                   </div>
-                  <button
-                    className="text-red-500 hover:text-red-700 transition duration-200"
-                    onClick={() => handleRemoveProduct(product._id)}
-                  >
-                    <FaTrash size={20} />
-                  </button>
-                </div>
-              </Card>
+                </Card>
+              ) : null
             ))}
           </div>
 
@@ -173,12 +180,14 @@ const CartPage = () => {
               <h3 className="text-xl font-bold mb-4">Order Summary</h3>
               <ul className="mb-4">
                 {cart?.products.map(({ product, quantity }) => (
-                  <li key={product._id} className="flex justify-between mb-2">
-                    <span>
-                      {product.title} x {quantity}
-                    </span>
-                    <span>${(product.price * quantity).toFixed(2)}</span>
-                  </li>
+                  product ? (
+                    <li key={product._id} className="flex justify-between mb-2">
+                      <span>
+                        {product.title || 'No title'} x {quantity}
+                      </span>
+                      <span>${((product.price || 0) * quantity).toFixed(2)}</span>
+                    </li>
+                  ) : null
                 ))}
               </ul>
               <p className="text-lg font-bold border-t pt-2">
@@ -186,7 +195,7 @@ const CartPage = () => {
                 {cart?.products
                   .reduce(
                     (total, { product, quantity }) =>
-                      total + product.price * quantity,
+                      total + (product.price || 0) * quantity,
                     0
                   )
                   .toFixed(2)}
