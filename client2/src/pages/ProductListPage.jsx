@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { CiShoppingCart } from "react-icons/ci";
 import { RiLogoutBoxRLine } from "react-icons/ri";
-
+import AdminRoutes from "@/components/AdminRoutes";
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
@@ -64,6 +64,11 @@ const ProductListPage = () => {
       <div className="flex justify-between">
         <h2 className="text-2xl font-bold mb-4">Products</h2>
         <div className="flex gap-5">
+        <AdminRoutes>
+            <Link to="/admin">
+              <Button variant="outline">Manage Products</Button>
+            </Link>
+          </AdminRoutes>
           <Link to="/cart">
             <Button variant="outline">
               Go to Cart <CiShoppingCart size={20} className="ml-2" />
