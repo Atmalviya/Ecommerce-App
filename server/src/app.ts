@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 const corsOptions: cors.CorsOptions = {
-  origin: 'http://localhost:5173', 
+  origin: 'https://ecommerce-app-jsx.vercel.app', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.header('Access-Control-Allow-Origin', 'https://ecommerce-app-jsx.vercel.app');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(200).json({});
