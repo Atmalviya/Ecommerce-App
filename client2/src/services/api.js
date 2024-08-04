@@ -1,5 +1,5 @@
 import axios from 'axios';
-export const HOST = import.meta.env.VITE_HOST;
+export const HOST = 'https://ecommerce-app-server.up.railway.app'
 export const API = axios.create({
   baseURL: `${HOST}/api`,
 });
