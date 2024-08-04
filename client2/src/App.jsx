@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import ProductListPage from "./pages/ProductListPage";
 import CartPage from "./pages/CartPage";
 import AdminPage from "./pages/AdminPage";
+import AdminRoutes from "./components/AdminRoutes";
 const token = localStorage.getItem("token");
 
 const AuthRoute = ({ children }) => {
@@ -21,7 +22,7 @@ const AuthRoute = ({ children }) => {
 };
 
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" />;
 };
 
@@ -65,7 +66,9 @@ function App() {
           path="/admin"
           element={
             <PrivateRoute>
-              <AdminPage />
+              <AdminRoutes>
+                <AdminPage />
+              </AdminRoutes>
             </PrivateRoute>
           }
         />
